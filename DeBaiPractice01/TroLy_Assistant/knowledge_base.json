@@ -1,0 +1,52 @@
+{
+  "metadata": {
+    "name": "Trợ lý Khoa CNTT",
+    "version": "1.0",
+    "author": "Bộ môn TTNT"
+  },
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["xin chào", "chào bạn", "hello", "hi", "chào trợ lý"],
+      "responses": [
+        "Xin chào! Mình là trợ lý Khoa CNTT, mình giúp gì được cho bạn?",
+        "Chào bạn 👋 Bạn cần hỏi về điều gì?"
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["tạm biệt", "bye", "hẹn gặp lại", "cảm ơn nhé"],
+      "responses": ["Tạm biệt bạn, chúc bạn học tốt!", "Hẹn gặp lại nhé!"]
+    },
+    {
+      "tag": "hours",
+      "patterns": ["mấy giờ mở cửa", "giờ làm việc", "khi nào mở cửa", "thời gian làm việc"],
+      "responses": ["Phòng máy mở cửa 7:00–21:00, từ Thứ Hai đến Thứ Bảy."]
+    },
+    {
+      "tag": "wifi",
+      "patterns": ["mật khẩu wifi", "wifi password", "pass wifi", "wifi của khoa"],
+      "responses": ["Mật khẩu WiFi của Khoa là: OU@CNTT2026 (đổi mỗi học kỳ)."]
+    },
+    {
+      "tag": "labroom",
+      "patterns": ["phòng máy ở đâu", "phòng thực hành", "vị trí phòng lab", "lab ở tầng mấy"],
+      "responses": ["Phòng thực hành đặt tại tầng 3, dãy B (phòng B301–B305)."]
+    },
+    {
+      "tag": "python_install",
+      "patterns": ["cài python", "cài đặt anaconda", "làm sao cài python", "tải python"],
+      "responses": ["Bạn nên cài Anaconda tại anaconda.com, rồi tạo môi trường: conda create -n ttnt python=3.10"]
+    },
+    {
+      "tag": "submit_assignment",
+      "patterns": ["nộp bài ở đâu", "cách nộp bài tập", "hạn nộp bài", "nộp assignment"],
+      "responses": ["Bài tập nộp trên hệ thống LMS của trường trước 23:59 ngày hết hạn ghi trong đề."]
+    },
+    {
+      "tag": "contact",
+      "patterns": ["liên hệ giảng viên", "email thầy", "số điện thoại văn phòng khoa", "gặp cố vấn"],
+      "responses": ["Bạn liên hệ Văn phòng Khoa CNTT qua email cntt@ou.edu.vn hoặc tầng 3 dãy A."]
+    }
+  ]
+}
