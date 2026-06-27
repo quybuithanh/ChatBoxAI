@@ -1,0 +1,17 @@
+Bạn: xin chào
+Trợ lý: Chào bạn!
+Bạn: hi
+Trợ lý: Rất vui được gặp bạn!
+Bạn: hello
+Trợ lý: Chào bạn 👋 Bạn cần hỏi về điều gì?
+Bạn: mật khẩu wifi là gì
+Trợ lý: Mật khẩu WiFi của Khoa là: OU@CNTT2026 (đổi mỗi học kỳ).
+Bạn: 15 + 27
+Trợ lý: 15 + 27 = 42
+Bạn: bây giờ là mấy giờ
+Trợ lý: Bây giờ là 10:11:58
+Bạn: help
+Trợ lý: Tôi có thể:
+- Trả lời FAQ
+- Tính toán (+ - * /)
+- Cho biết giờ hiện tại

@@ -18,6 +18,8 @@ import argparse
 import json
 import os
 import unicodedata
+from datetime import datetime
+import random
 
 # --------------------------------------------------------------------------- #
 # Hằng số cấu hình (giữ nguyên)
@@ -106,6 +108,7 @@ class Intent:
         self._tag = tag
         self._patterns = list(patterns)
         self._responses = list(responses)
+        self._last = None
 
     @property
     def tag(self):
@@ -133,7 +136,7 @@ class Intent:
             for pattern in self._patterns
         )
 
-    def reply(self, index=0):
+    def reply(self, index=None):
         """Lấy một câu trả lời (xoay vòng theo index). Mặc định câu đầu tiên.
 
         Gợi ý: dùng index % len(responses); nếu rỗng trả về "".
@@ -141,11 +144,13 @@ class Intent:
         if not self._responses:
             return ""
 
-        return self._responses[index % len(self._responses)]
+        if len(self._responses) == 1:
+            return self._responses[0]
 
-    def __repr__(self):
-        return f"Intent(tag={self._tag!r}, patterns={len(self._patterns)})"
-
+        choices = [r for r in self._responses if r != self._last]
+        ans = random.choice(choices)
+        self._last = ans
+        return ans
 
 class KnowledgeBase:
     """Tập hợp các Intent, có thể nạp từ tệp JSON."""
@@ -313,6 +318,37 @@ class MathSkill(Skill):
         r = int(r) if r == int(r) else r
 
         return f"{a} {op} {b} = {r}"
+    
+class TimeSkill(Skill):
+    name = "time"
+
+    def handle(self, text):
+        text = normalize(text)
+
+        if text in [
+            "may gio roi",
+            "gio hien tai",
+            "bay gio la may gio"
+        ]:
+            return "Bây giờ là " + datetime.now().strftime("%H:%M:%S")
+
+        return None
+    
+class HelpSkill(Skill):
+    name = "help"
+
+    def handle(self, text):
+        text = normalize(text)
+
+        if text in ["help", "tro giup", "ban lam duoc gi"]:
+            return (
+                "Tôi có thể:\n"
+                "- Trả lời FAQ\n"
+                "- Tính toán (+ - * /)\n"
+                "- Cho biết giờ hiện tại"
+            )
+
+        return None
 
 
 # --------------------------------------------------------------------------- #
@@ -385,7 +421,7 @@ class Assistant:
 def build_assistant(kb_path, threshold=DEFAULT_THRESHOLD):
     """Tạo Assistant với 2 kỹ năng: ưu tiên MathSkill, sau đó FaqSkill."""
     kb = KnowledgeBase.load_json(kb_path)
-    return Assistant([MathSkill(), FaqSkill(kb, threshold)])
+    return Assistant([MathSkill(), TimeSkill(), HelpSkill(), FaqSkill(kb, threshold)])
 
 
 def parse_args(argv=None):
