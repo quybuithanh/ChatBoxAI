@@ -52,6 +52,7 @@ def strip_accents(text):
             result += ch
     return result
 
+aaaa
 
 def normalize(text):
     """Chuẩn hoá: bỏ dấu -> chữ thường -> bỏ dấu câu -> gộp khoảng trắng.
