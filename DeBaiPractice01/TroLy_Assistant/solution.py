@@ -52,7 +52,6 @@ def strip_accents(text):
             result += ch
     return result
 
-aaaa
 
 def normalize(text):
     """Chuẩn hoá: bỏ dấu -> chữ thường -> bỏ dấu câu -> gộp khoảng trắng.
@@ -233,7 +232,7 @@ class Skill(abc.ABC):
     @abc.abstractmethod
     def handle(self, text):
         """Trả câu trả lời (str) nếu xử lý được, ngược lại None để nhường skill khác."""
-        raise NotImplementedError
+        
 
 
 class FaqSkill(Skill):
@@ -242,14 +241,18 @@ class FaqSkill(Skill):
     name = "faq"
 
     def __init__(self, kb, threshold=DEFAULT_THRESHOLD):
-        # TODO: lưu kb và threshold
-        raise NotImplementedError
+        self._kb = kb
+        self._threshold = threshold
 
     def handle(self, text):
         """Gợi ý: dùng kb.find_best(text); chỉ trả lời khi intent khác None VÀ
         score >= threshold; ngược lại trả về None."""
-        # TODO
-        raise NotImplementedError
+        intent, score = self._kb.find_best(text)
+
+        if intent is not None and score >= self._threshold:
+            return intent.reply()
+
+        return None
 
 
 def is_number(token):
@@ -257,8 +260,11 @@ def is_number(token):
 
     Gợi ý: thử float(token) trong try/except ValueError.
     """
-    # TODO
-    raise NotImplementedError
+    try:
+        float(token)
+        return True
+    except ValueError:
+        return False
 
 
 class MathSkill(Skill):
@@ -275,8 +281,38 @@ class MathSkill(Skill):
           - Nếu kết quả là số nguyên (r == int(r)) thì hiển thị dạng int.
           - Trả chuỗi dạng: "a op b = r"
         """
-        # TODO
-        raise NotImplementedError
+        parts = text.strip().split()
+
+        if len(parts) != 3:
+            return None
+
+        a, op, b = parts
+
+        if op not in self.OPS:
+            return None
+
+        if not is_number(a) or not is_number(b):
+            return None
+
+        a = float(a)
+        b = float(b)
+
+        if op == "+":
+            r = a + b
+        elif op == "-":
+            r = a - b
+        elif op == "*":
+            r = a * b
+        elif op == "/":
+            if b == 0:
+                return "Không thể chia cho 0!   "
+            r = a / b
+
+        a = int(a) if a == int(a) else a
+        b = int(b) if b == int(b) else b
+        r = int(r) if r == int(r) else r
+
+        return f"{a} {op} {b} = {r}"
 
 
 # --------------------------------------------------------------------------- #
@@ -286,21 +322,29 @@ class Assistant:
     """Điều phối nhiều Skill theo thứ tự; ghi lại lịch sử hội thoại."""
 
     def __init__(self, skills, fallback=FALLBACK):
-        # TODO: lưu _skills (list), _fallback, _history = [] (danh sách (role, text))
-        raise NotImplementedError
+        self._skills = list(skills)
+        self._fallback = fallback
+        self._history = []
 
     @property
     def history(self):
-        # TODO
-        raise NotImplementedError
+        return self._history
 
     def respond(self, text):
         """Hỏi lần lượt từng skill; skill nào trả khác None thì dùng, hết thì fallback.
 
         Nhớ ghi vào _history: ('user', text) trước, rồi ('bot', câu_trả_lời).
         """
-        # TODO
-        raise NotImplementedError
+        self._history.append(("user", text))
+
+        for skill in self._skills:
+            response = skill.handle(text)
+            if response is not None:
+                self._history.append(("bot", response))
+                return response
+
+        self._history.append(("bot", self._fallback))
+        return self._fallback
 
     def stats(self):
         """Trả dict {'messages': .., 'answered': .., 'fallback': ..}.
@@ -309,17 +353,30 @@ class Assistant:
         - fallback: số lượt bot trả đúng câu _fallback
         - answered: số lượt bot trả lời - fallback
         """
-        # TODO
-        raise NotImplementedError
+        messages = sum(1 for role, _ in self._history if role == "user")
+        fallback = sum(
+            1 for role, text in self._history
+            if role == "bot" and text == self._fallback
+        )
+        answered = messages - fallback
+
+        return {
+            "messages": messages,
+            "answered": answered,
+            "fallback": fallback
+        }
 
     def reset(self):
-        # TODO: xoá lịch sử
-        raise NotImplementedError
+        self._history.clear()
 
     def save_log(self, path):
         """Ghi hội thoại ra tệp UTF-8, mỗi dòng dạng 'Bạn: ...' hoặc 'Trợ lý: ...'."""
-        # TODO
-        raise NotImplementedError
+        with open(path, "w", encoding="utf-8") as f:
+            for role, text in self._history:
+                if role == "user":
+                    f.write(f"Bạn: {text}\n")
+                else:
+                    f.write(f"Trợ lý: {text}\n")
 
 
 # --------------------------------------------------------------------------- #
